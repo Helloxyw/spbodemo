@@ -10,6 +10,20 @@ import java.util.Map;
 public class ToutiaoUtil {
     private static final Logger logger = LoggerFactory.getLogger(ToutiaoUtil.class);
 
+    public static String TOUTIAO_DOMAIN = "http://127.0.0.1:8080/";
+    public static String IMAGE_DIR ="/home/xyw/saveImages/";
+
+    public static String[] IMAGE_FILE_EXT = new String[]{"png", "jpg", "bmp", "jpeg"};
+
+    public static boolean isFileAllowed(String fileExt) {
+        for (String ext : IMAGE_FILE_EXT) {
+            if (ext.equals(fileExt)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     // to find the server runntime status
     public static String getJSONString(int code) {
