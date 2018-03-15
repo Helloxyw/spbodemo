@@ -1,7 +1,9 @@
 package com.xyw.spbodemo.service;
 
 import com.xyw.spbodemo.dao.NewsDao;
+import com.xyw.spbodemo.dao.UserDao;
 import com.xyw.spbodemo.model.News;
+import com.xyw.spbodemo.model.User;
 import com.xyw.spbodemo.util.ToutiaoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,10 @@ public class NewsService {
     public int addNews(News news){
         newsDao.addNews(news);
         return news.getId();
+    }
+
+    public News getById(int newsId){
+        return newsDao.selectById(newsId);
     }
 
     public List<News> getLatestNews(int userId, int offset, int limit) {

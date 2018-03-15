@@ -40,7 +40,7 @@
                                 </div>
                                 <div class="content-main">
                                     <h3 class="title">
-                                        <a target="_blank" rel="external nofollow" href="$!{vo.news.link}">
+                                        <a target="_blank" rel="external nofollow" th:href="@{#{vo.get('news').link}}">
                                             <span th:text="${vo.get('news').title}"></span>
                                         </a>
                                     </h3>

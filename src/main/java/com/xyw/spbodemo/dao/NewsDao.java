@@ -4,6 +4,7 @@ import com.xyw.spbodemo.model.News;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,5 +25,10 @@ public interface NewsDao {
 
     List<News> selectByUserIdAndOffset(@Param("userId") int userId
             ,@Param("offset") int offset,@Param("limit") int limit);
+
+    @Select({"select ",SELECT_FIELDS," from ",TABLE_NAME," where id=#{newsId}"})
+    News selectById(int newsId);
+
+
 
 }

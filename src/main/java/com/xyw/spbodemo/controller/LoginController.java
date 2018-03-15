@@ -59,7 +59,7 @@ public class LoginController {
                         HttpServletResponse response) {
 
         try {
-            Map<String, Object> map = userService.register(username, password);
+            Map<String, Object> map = userService.login(username, password);
 
             if (map.containsKey("ticket")) {
                 Cookie cookie = new Cookie("ticket", map.get("ticket").toString());
@@ -67,6 +67,7 @@ public class LoginController {
                 if (rememberme > 0) {
                     cookie.setMaxAge(3600 * 24 * 5);
                 }
+                response.addCookie(cookie);
                 return ToutiaoUtil.getJSONString(0, "register success");
             } else {
                 return ToutiaoUtil.getJSONString(1, map);
