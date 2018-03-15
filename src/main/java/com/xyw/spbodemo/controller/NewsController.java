@@ -1,7 +1,10 @@
 package com.xyw.spbodemo.controller;
 
 
+import com.xyw.spbodemo.model.HostHolder;
+import com.xyw.spbodemo.model.News;
 import com.xyw.spbodemo.service.NewsService;
+import com.xyw.spbodemo.service.QiniuService;
 import com.xyw.spbodemo.util.ToutiaoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Date;
 
 @Controller
 public class NewsController {
@@ -26,8 +30,41 @@ public class NewsController {
     @Autowired
     private NewsService newsService;
 
+    @Autowired
+    private QiniuService qiniuService;
 
-    @RequestMapping(path = {"/image"}, method = {RequestMethod.GET})
+    @Autowired
+    private HostHolder hostHolder;
+
+    @RequestMapping(path = {"/user/addNews/"}, method = {RequestMethod.POST})
+    @ResponseBody
+    public String addNews(@RequestParam("image") String image,
+                          @RequestParam("title") String title,
+                          @RequestParam("link") String link){
+
+        try{
+            News news = new News();
+            if(hostHolder.getUser()!=null){
+                news.setUserId(hostHolder.getUser().getId());
+            }else{
+                //the anonymous user
+                news.setUserId(3);
+            }
+
+            news.setImage(image);
+            news.setTitle(title);
+            news.setLink(link);
+            news.setCreatedDate(new Date());
+            newsService.addNews(news);
+            return ToutiaoUtil.getJSONString(0);
+
+        }catch (Exception e){
+            logger.error(e.getMessage());
+            return ToutiaoUtil.getJSONString(1,"add news failed");
+        }
+    }
+
+    @RequestMapping(path = {"/image/"}, method = {RequestMethod.GET})
     @ResponseBody
     public void getImage(@RequestParam("name") String imageName, HttpServletResponse response) {
         try {
@@ -44,7 +81,8 @@ public class NewsController {
     @ResponseBody
     public String uploadImage(@RequestParam("file") MultipartFile file) {
         try {
-            String fileUrl = newsService.saveImage(file);
+            //    String fileUrl = newsService.saveImage(file);
+            String fileUrl = qiniuService.saveImage(file);
             if (file == null) {
                 return ToutiaoUtil.getJSONString(1, "upload image failed");
             }

@@ -22,6 +22,13 @@ public class UserService {
     @Autowired
     private LoginTicketDao loginTicketDao;
 
+
+
+    public String addUser(User user){
+        userDao.addUser(user);
+        return user.getName();
+    }
+
     public Map<String, Object> register(String username, String password) {
         Map<String, Object> map = new HashMap<String, Object>();
 

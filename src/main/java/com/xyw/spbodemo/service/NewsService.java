@@ -17,8 +17,14 @@ import java.util.UUID;
 @Service
 public class NewsService {
 
+
     @Autowired
     private NewsDao newsDao;
+
+    public int addNews(News news){
+        newsDao.addNews(news);
+        return news.getId();
+    }
 
     public List<News> getLatestNews(int userId, int offset, int limit) {
         return newsDao.selectByUserIdAndOffset(userId, offset, limit);

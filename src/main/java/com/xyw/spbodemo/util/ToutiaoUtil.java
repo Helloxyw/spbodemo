@@ -10,6 +10,7 @@ import java.util.Map;
 public class ToutiaoUtil {
     private static final Logger logger = LoggerFactory.getLogger(ToutiaoUtil.class);
 
+    public static String QINIU_DOMAIN_PREFIX = "http://p5imqtnjv.bkt.clouddn.com/";
     public static String TOUTIAO_DOMAIN = "http://127.0.0.1:8080/";
     public static String IMAGE_DIR ="/home/xyw/saveImages/";
 
