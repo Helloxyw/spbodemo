@@ -1,11 +1,10 @@
 package com.xyw.spbodemo;
 
+import com.xyw.spbodemo.dao.CommentDao;
 import com.xyw.spbodemo.dao.LoginTicketDao;
 import com.xyw.spbodemo.dao.NewsDao;
 import com.xyw.spbodemo.dao.UserDao;
-import com.xyw.spbodemo.model.LoginTicket;
-import com.xyw.spbodemo.model.News;
-import com.xyw.spbodemo.model.User;
+import com.xyw.spbodemo.model.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +30,9 @@ public class InitDatabaseTest {
     @Autowired
     LoginTicketDao loginTicketDao;
 
+    @Autowired
+    CommentDao commentDao;
+
     @Test
     public void initData() {
         Random random = new Random();
@@ -48,33 +50,46 @@ public class InitDatabaseTest {
             News news = new News();
             news.setCommentCount(i);
             Date date = new Date();
-            date.setTime(date.getTime()+1000*3600*5*i);
+            date.setTime(date.getTime() + 1000 * 3600 * 5 * i);
             news.setCreatedDate(date);
-            news.setImage(String.format("http://image.nowcoder.com/head/%dm.png",i));
-            news.setLikeCount(i+1);
-            news.setUserId(i+1);
-            news.setTitle(String.format("TITLE{%d}",i));
-            news.setLink(String.format("http://www.nowcoder.com/%d.html",i));
+            news.setImage(String.format("http://image.nowcoder.com/head/%dm.png", i));
+            news.setLikeCount(i + 1);
+            news.setUserId(i + 1);
+            news.setTitle(String.format("TITLE{%d}", i));
+            news.setLink(String.format("http://www.nowcoder.com/%d.html", i));
 
             newsDao.addNews(news);
+
+            for (int j = 0; j < 3; j++) {
+                Comment comment = new Comment();
+                comment.setUserId(i + 1);
+                comment.setEntityId(news.getId());
+                comment.setEntityType(EntityType.ENTITY_NEWS);
+                comment.setStatus(0);
+                comment.setCreatedDate(new Date());
+                comment.setContent("Comment " + j);
+                commentDao.addComment(comment);
+            }
 
             user.setPassword("new Password");
             userDao.updatePassword(user);
 
             LoginTicket ticket = new LoginTicket();
             ticket.setStatus(0);
-            ticket.setUserId(i+1);
+            ticket.setUserId(i + 1);
             ticket.setExpired(date);
-            ticket.setTicket(String.format("TICKET%d",i));
+            ticket.setTicket(String.format("TICKET%d", i));
             loginTicketDao.addTicket(ticket);
 
-            loginTicketDao.updateStatus(ticket.getTicket(),2);
+            loginTicketDao.updateStatus(ticket.getTicket(), 2);
         }
 
         Assert.assertEquals("new Password", userDao.selectById(1)
                 .getPassword());
-        Assert.assertNull(userDao.selectById(1));
 
-        Assert.assertEquals(2,loginTicketDao.selectByTicket("TICKET2").getStatus());
+
+        Assert.assertEquals(2, loginTicketDao.selectByTicket("TICKET2").getStatus());
+
+        Assert.assertNotNull(commentDao.selectByEntity(1,1));
     }
 }

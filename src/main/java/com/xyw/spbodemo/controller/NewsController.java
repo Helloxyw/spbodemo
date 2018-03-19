@@ -1,12 +1,13 @@
 package com.xyw.spbodemo.controller;
 
 
-import com.xyw.spbodemo.model.HostHolder;
-import com.xyw.spbodemo.model.News;
+import com.xyw.spbodemo.model.*;
+import com.xyw.spbodemo.service.CommentService;
 import com.xyw.spbodemo.service.NewsService;
 import com.xyw.spbodemo.service.QiniuService;
 import com.xyw.spbodemo.service.UserService;
 import com.xyw.spbodemo.util.ToutiaoUtil;
+import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 public class NewsController {
@@ -38,13 +41,54 @@ public class NewsController {
     @Autowired
     private HostHolder hostHolder;
 
+    @Autowired
+    private CommentService commentService;
+
+
+    @RequestMapping(path = {"/addComment"}, method = {RequestMethod.POST})
+    public String addComment(@RequestParam("newsId") int newsId,
+                             @RequestParam("content") String content) {
+
+        try {
+            //filter content
+            Comment comment = new Comment();
+            comment.setUserId(hostHolder.getUser().getId());
+            comment.setContent(content);
+            comment.setEntityId(newsId);
+            comment.setEntityType(EntityType.ENTITY_NEWS);
+            comment.setCreatedDate(new Date());
+            comment.setStatus(0);
+
+            commentService.addComment(comment);
+
+            //update the commentCount of news
+            int count = commentService.getCommentCount(
+                    comment.getEntityId(), comment.getEntityType());
+
+            newsService.updateCommentCount(comment.getEntityId(),count);
+
+            //how to asynchronous
+        } catch (Exception e) {
+            logger.error("failed to add comment " + e.getMessage());
+        }
+        return "redirect:/news/" + newsId;
+    }
 
     @RequestMapping(path = {"/news/{newsId}"}, method = {RequestMethod.GET})
     public String newsDetail(@PathVariable("newsId") int newsId, Model model) {
         News news = newsService.getById(newsId);
         if (news != null) {
             //comment
+            List<Comment> comments = commentService.getCommentByEntity(news.getId(), EntityType.ENTITY_NEWS);
+            List<ViewObject> commentVOs = new ArrayList<ViewObject>();
+            for (Comment comment : comments) {
+                ViewObject vo = new ViewObject();
+                vo.set("comment", comment);
+                vo.set("user", userService.getUser(comment.getUserId()));
+                commentVOs.add(vo);
+            }
 
+            model.addAttribute("comments", commentVOs);
         }
         model.addAttribute("news", news);
         model.addAttribute("owner", userService.getUser(news.getUserId()));

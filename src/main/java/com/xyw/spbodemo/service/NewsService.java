@@ -28,6 +28,10 @@ public class NewsService {
         return news.getId();
     }
 
+    public int updateCommentCount(int newsId,int count){
+        return newsDao.updateCommentCount(newsId,count);
+    }
+
     public News getById(int newsId){
         return newsDao.selectById(newsId);
     }
