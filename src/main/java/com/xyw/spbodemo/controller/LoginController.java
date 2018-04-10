@@ -1,6 +1,9 @@
 package com.xyw.spbodemo.controller;
 
 
+import com.xyw.spbodemo.async.EventModel;
+import com.xyw.spbodemo.async.EventProducer;
+import com.xyw.spbodemo.async.EventType;
 import com.xyw.spbodemo.service.UserService;
 import com.xyw.spbodemo.util.ToutiaoUtil;
 import org.slf4j.Logger;
@@ -22,6 +25,9 @@ public class LoginController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EventProducer eventProducer;
 
     @RequestMapping(path = {"/reg/"}, method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
@@ -68,6 +74,11 @@ public class LoginController {
                     cookie.setMaxAge(3600 * 24 * 5);
                 }
                 response.addCookie(cookie);
+                eventProducer.fireEvent(new EventModel(EventType.LOGIN).
+                        setActorId((int) (map.get("userId"))).
+                        setExts("username", username).
+                        setExts("email", "123@qq.com"));
+
                 return ToutiaoUtil.getJSONString(0, "register success");
             } else {
                 return ToutiaoUtil.getJSONString(1, map);

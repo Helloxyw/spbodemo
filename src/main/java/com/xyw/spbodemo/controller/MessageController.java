@@ -41,7 +41,6 @@ public class MessageController {
     @RequestMapping(path = {"/msg/list"}, method = RequestMethod.GET)
     public String conversationDetail(Model model) {
         try {
-
             int localUserId = hostHolder.getUser().getId();
             List<ViewObject> conversations = new ArrayList<>();
             List<Message> conversationList = messageService.getConversationList(localUserId, 0, 10);
@@ -80,7 +79,6 @@ public class MessageController {
                 vo.set("userId", user.getId());
 
                 messages.add(vo);
-
 
             }
             model.addAttribute("messages", messages);

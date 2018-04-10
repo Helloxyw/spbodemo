@@ -1,4 +1,4 @@
-<div th:include="header" th:remove="tag"></div>
+<div th:include="header" th:remove="tag" xmlns:th="http://www.w3.org/1999/xhtml"></div>
 
 <div id="main" xmlns:th="http://www.w3.org/1999/xhtml">
     <div class="container" id="daily">
@@ -27,10 +27,16 @@
 
                         <div class="post">
                             <div class="votebar">
-                                <button class="click-like up" aria-pressed="false" title="赞同"><i class="vote-arrow"></i><span
+                                <button th:if="${vo.get('like')}>0" th:data-id="${vo.get('news').id}" class="click-like up pressed" aria-pressed="false" title="赞同"><i class="vote-arrow"></i><span
+                                        class="count">
+                                    <span th:text="${vo.get('news').likeCount}"></span>
+                                </span></button>
+                                <button th:if="${vo.get('like')}<=0" th:data-id="${vo.get('news').id}" class="click-like up" aria-pressed="false" title="赞同"><i class="vote-arrow"></i><span
                                         class="count"><span
                                         th:text="${vo.get('news').likeCount}"></span></span></button>
-                                <button class="click-dislike down" aria-pressed="true" title="反对"><i
+                                <button th:if="${vo.get('like')}<0" th:data-id="${vo.get('news').id}" class="click-dislike down pressed" aria-pressed="true" title="反对"><i
+                                        class="vote-arrow"></i></button>
+                                <button th:if="${vo.get('like')}>=0" th:data-id="${vo.get('news').id}" class="click-dislike down" aria-pressed="true" title="反对"><i
                                         class="vote-arrow"></i>
                                 </button>
                             </div>
@@ -78,5 +84,13 @@
     window.loginpop = $!{pop};
 </script>
 -->
-<script>window.loginpop = $!{pop};</script>
+
+<span th:if="${pop}!=null">
+<script th:inline="javascript">
+/*<![CDATA[*/
+    window.loginpop =[[${pop}]];
+/*]]>*/
+</script>
+<script type="text/javascript" src="/scripts/main/site/home.js"></script>
+</span>
 <div th:include="footer" th:remove="tag"></div>

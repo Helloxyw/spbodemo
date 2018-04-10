@@ -2,10 +2,7 @@ package com.xyw.spbodemo.controller;
 
 
 import com.xyw.spbodemo.model.*;
-import com.xyw.spbodemo.service.CommentService;
-import com.xyw.spbodemo.service.NewsService;
-import com.xyw.spbodemo.service.QiniuService;
-import com.xyw.spbodemo.service.UserService;
+import com.xyw.spbodemo.service.*;
 import com.xyw.spbodemo.util.ToutiaoUtil;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
@@ -44,6 +41,9 @@ public class NewsController {
     @Autowired
     private CommentService commentService;
 
+    @Autowired
+    private LikeService likeService;
+
 
     @RequestMapping(path = {"/addComment"}, method = {RequestMethod.POST})
     public String addComment(@RequestParam("newsId") int newsId,
@@ -65,7 +65,7 @@ public class NewsController {
             int count = commentService.getCommentCount(
                     comment.getEntityId(), comment.getEntityType());
 
-            newsService.updateCommentCount(comment.getEntityId(),count);
+            newsService.updateCommentCount(comment.getEntityId(), count);
 
             //how to asynchronous
         } catch (Exception e) {
@@ -78,6 +78,15 @@ public class NewsController {
     public String newsDetail(@PathVariable("newsId") int newsId, Model model) {
         News news = newsService.getById(newsId);
         if (news != null) {
+            int localUserId = hostHolder.getUser() != null ?
+                    hostHolder.getUser().getId() : 0;
+
+            if (localUserId != 0) {
+                model.addAttribute("like", likeService.getLikeStatus(localUserId, EntityType.ENTITY_NEWS, news.getId()));
+            } else {
+                model.addAttribute("like", 0);
+            }
+
             //comment
             List<Comment> comments = commentService.getCommentByEntity(news.getId(), EntityType.ENTITY_NEWS);
             List<ViewObject> commentVOs = new ArrayList<ViewObject>();

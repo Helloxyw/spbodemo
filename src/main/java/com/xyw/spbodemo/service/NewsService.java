@@ -23,16 +23,21 @@ public class NewsService {
     @Autowired
     private NewsDao newsDao;
 
-    public int addNews(News news){
+    public int addNews(News news) {
         newsDao.addNews(news);
         return news.getId();
     }
 
-    public int updateCommentCount(int newsId,int count){
-        return newsDao.updateCommentCount(newsId,count);
+    public int updateLikeCount(int newsId, int likeCount) {
+        return newsDao.updateLikeCount(newsId,likeCount);
     }
 
-    public News getById(int newsId){
+
+    public int updateCommentCount(int newsId, int count) {
+        return newsDao.updateCommentCount(newsId, count);
+    }
+
+    public News getById(int newsId) {
         return newsDao.selectById(newsId);
     }
 

@@ -4,9 +4,10 @@
         <div class="post detail">
 
             <div class="votebar">
-                <button class="click-like up" aria-pressed="false" title="赞同"><i class="vote-arrow"></i><span class="count"><span th:text="${news.likeCount}"></span></span></button>
-                <button class="click-dislike down" aria-pressed="true" title="反对"><i class="vote-arrow"></i>
-                </button>
+                <button th:if="${like}>0" class="click-like up pressed" th:data-id="${news.id}" aria-pressed="false" title="赞同"><i class="vote-arrow"></i><span class="count"><span th:text="${news.likeCount}"></span></span></button>
+                <button th:if="${like}<=0" class="click-like up" th:data-id="${news.id}" aria-pressed="false" title="赞同"><i class="vote-arrow"></i><span class="count"><span th:text="${news.likeCount}"></span></span></button>
+                <button th:if="${like}<0" class="click-dislike down pressed" th:data-id="${news.id}" aria-pressed="true" title="反对"><i class="vote-arrow"></i></button>
+                <button th:if="${like}>=0" class="click-dislike down " th:data-id="${news.id}" aria-pressed="true" title="反对"><i class="vote-arrow"></i></button>
             </div>
 
             <div class="content" data-url="http://nowcoder.com/posts/5l3hjr">
@@ -99,6 +100,7 @@
 
         })
     </script>
+    <script type="text/javascript" src="/scripts/main/site/detail.js"></script>
 </div>
 
 <div th:include="footer" th:remove="tag"></div>

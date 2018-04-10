@@ -23,8 +23,7 @@ public class UserService {
     private LoginTicketDao loginTicketDao;
 
 
-
-    public String addUser(User user){
+    public String addUser(User user) {
         userDao.addUser(user);
         return user.getName();
     }
@@ -93,6 +92,8 @@ public class UserService {
             map.put("msgpwd", "the password is incorrect");
             return map;
         }
+
+        map.put("userId", user.getId());
         //ticket
         String ticket = addLoginTicket(user.getId());
         map.put("ticket", ticket);
@@ -115,8 +116,8 @@ public class UserService {
 
 
     //logout
-    public void logout(String ticket){
-        loginTicketDao.updateStatus(ticket,1);
+    public void logout(String ticket) {
+        loginTicketDao.updateStatus(ticket, 1);
     }
 
 
